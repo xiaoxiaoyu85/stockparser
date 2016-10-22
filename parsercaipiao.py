@@ -160,8 +160,6 @@ def ParserCaiPiaoCmd(strCmdJson):
     strResCode = ''
     try:
         inputDict = json.loads(strCmdJson)
-        if inputDict.has_key('Cookie'):
-            SetCook(inputDict['Cookie'])
         if 'UpdateCaiPiaoData' == inputDict['Cmd']:
             strRes, strResCode = UpdateCaiPiaoData(inputDict['datafilepath'])
         elif 'NoRateAnalyse' == inputDict['Cmd']:
@@ -190,7 +188,7 @@ def ParserCaiPiaoCmd(strCmdJson):
     g_logger.debug("result " + inputDict['Cmd'] + " json:" + resultjson)
     return resultjson
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     #sql = 'CREATE TABLE shishicai1 (\
     #no   INTEGER       PRIMARY KEY AUTOINCREMENT,\
     #dateno VARCHAR (16) DEFAULT NULL,\
@@ -206,13 +204,13 @@ if __name__ == "__main__":
 
     #strSql = 'select count(*) from shishicai;'
     #sqlAdp.ExecuSearch(strSql)
-    dictCmd = {}
-    dictCmd["Cmd"] = "UpdateCaiPiaoData"
-    dictCmd["Cmd"] = "NoRateAnalyse"
-    dictCmd["NoSet"] = "(0,3,6,9)"
-    dictCmd["Position"] = "qian"
-    strCmdJson = json.dumps(dictCmd, ensure_ascii = False)
-    print ParserCaiPiaoCmd(strCmdJson)
+    #dictCmd = {}
+    #dictCmd["Cmd"] = "UpdateCaiPiaoData"
+    #dictCmd["Cmd"] = "NoRateAnalyse"
+    #dictCmd["NoSet"] = "(0,3,6,9)"
+    #dictCmd["Position"] = "qian"
+    #strCmdJson = json.dumps(dictCmd, ensure_ascii = False)
+    #print ParserCaiPiaoCmd(strCmdJson)
     
 
 

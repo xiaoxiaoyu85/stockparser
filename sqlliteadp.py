@@ -12,6 +12,10 @@ class SqliteAdp():
         g_logger.info("db file path: " + strDBPath)
         self.conn = sqlite3.connect(strDBPath)
 
+    def __del__(self):        
+        self.conn.close()
+        g_logger.info("close db success")
+
     def GetConn(self):
         return self.conn
 
