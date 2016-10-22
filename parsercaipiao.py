@@ -3,26 +3,13 @@
 # -*- coding: utf-8 -*-
 import sys
 import json
-import re
-import urllib
-#import urllib2
-import cookielib
-import socket
 import datetime
 reload(sys) 
 sys.setdefaultencoding("utf-8")
-#import logging
 import os
-#from logging.handlers import RotatingFileHandler
-from httpComm import *
-from sqlliteadp import *
+from httpComm import g_logger, HttpBase
+from sqlliteadp import SqliteAdp
 
-#handler = RotatingFileHandler(filename= os.environ["APPDATA"] + "\\" + "stock.log", mode="a", maxBytes=10*1024*1024, backupCount=5)
-#formatter = logging.Formatter("%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
-#handler.setFormatter(formatter)
-#g_logger = logging.getLogger("stock")
-#g_logger.setLevel(logging.DEBUG)
-#g_logger.addHandler(handler)
 
 STR_SUCESS = 'sucess'
 STR_FAIL = 'fail'
@@ -177,7 +164,7 @@ def ParserCaiPiaoCmd(strCmdJson):
             SetCook(inputDict['Cookie'])
         if 'UpdateCaiPiaoData' == inputDict['Cmd']:
             strRes, strResCode = UpdateCaiPiaoData(inputDict['datafilepath'])
-        if 'NoRateAnalyse' == inputDict['Cmd']:
+        elif 'NoRateAnalyse' == inputDict['Cmd']:
             strRes, strResCode, listResInfo = GetNoRate(inputDict["Position"], inputDict['NoSet'])            
         else:
             strRes = STR_FAIL

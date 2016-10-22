@@ -1,4 +1,32 @@
-﻿
+﻿接口功能： 更新到最新的中奖数据
 参数:{"Cmd": "UpdateCaiPiaoData"}
 返回值: {"info": [], "result": "sucess", "rescode": "1000"}
+接口:  ParserCaiPiaoCmd(strCmdJson)
+
+/********************************/
+
+接口功能：获取某个中奖位指定集合数字的中奖期数，该期的中奖号码，该位前后2次中奖数字的期数间隔
+
+比如获取千位上，0，3，6，9出现的期数间隔
+
+参数: {"Position": "qian", "NoSet": "(0,3,6,9)", "Cmd": "NoRateAnalyse"}
+      Position  可以是wan,qian,bai,shi,ge
+      NoSet:因为想直接拼装sql ,所以要用括号括起来，多个数字的时候，用  ,  分割
+
+返回值:{"info": [
+        {
+            "phase": "20161022025",
+            "code": "39990",
+            "span": 3
+        },
+        {
+            "phase": "20161022024",
+            "code": "33704",
+            "span": 1
+        },
+        {
+            "phase": "20161022022",
+            "code": "67739",
+            "span": 2
+        }], "result": "sucess", "rescode": "1000"}
 接口:  ParserCaiPiaoCmd(strCmdJson)
