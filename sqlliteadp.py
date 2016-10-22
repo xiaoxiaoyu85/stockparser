@@ -3,11 +3,13 @@
 import os
 import sys
 import sqlite3
+from httpComm import g_logger
 
 class SqliteAdp():
     def __init__(self, strDBFileName):
         BIN_DIR = os.path.dirname(__file__)
         strDBPath = os.path.join(BIN_DIR, strDBFileName)
+        g_logger.info("db file path: " + strDBPath)
         self.conn = sqlite3.connect(strDBPath)
 
     def GetConn(self):
@@ -33,6 +35,7 @@ class SqliteAdp():
             else:
                 return False
         except Exception , e:
+            g_logger.info("Execu Sql error: " + strSql)
             return False
         return True
     
@@ -48,23 +51,11 @@ class SqliteAdp():
             else:
                 return listRes
         except Exception , e:
+            g_logger.info("ExecuSearch error: " + strSql)
             return listRes
         return listRes
 
 
-
-
-
-
-
-
-
-
-
-
-def InsertData(conn, sql):
-
-    return True
 
 
 

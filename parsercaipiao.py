@@ -5,24 +5,24 @@ import sys
 import json
 import re
 import urllib
-import urllib2
+#import urllib2
 import cookielib
 import socket
 import datetime
 reload(sys) 
 sys.setdefaultencoding("utf-8")
-import logging
+#import logging
 import os
-from logging.handlers import RotatingFileHandler
+#from logging.handlers import RotatingFileHandler
 from httpComm import *
 from sqlliteadp import *
 
-handler = RotatingFileHandler(filename= os.environ["APPDATA"] + "\\" + "stock.log", mode="a", maxBytes=10*1024*1024, backupCount=5)
-formatter = logging.Formatter("%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
-handler.setFormatter(formatter)
-g_logger = logging.getLogger("stock")
-g_logger.setLevel(logging.DEBUG)
-g_logger.addHandler(handler)
+#handler = RotatingFileHandler(filename= os.environ["APPDATA"] + "\\" + "stock.log", mode="a", maxBytes=10*1024*1024, backupCount=5)
+#formatter = logging.Formatter("%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
+#handler.setFormatter(formatter)
+#g_logger = logging.getLogger("stock")
+#g_logger.setLevel(logging.DEBUG)
+#g_logger.addHandler(handler)
 
 STR_SUCESS = 'sucess'
 STR_FAIL = 'fail'
@@ -32,6 +32,7 @@ STR_NET_ERR = '1002'               #http请求失败
 STR_PARSE_ERR = '1003'             #请求结果分析失败
 STR_NEEDLOGIN_ERR = '1004'
 STR_SERVER_DATA_ERR = '1005'
+STR_DATA_ERR = '1006'
 
 strUrl = "http://caipiao.baidu.com/lottery/draw/sorts/ajax_get_draw_data.php?"
 sqlAdp = SqliteAdp('caipiao.db')
@@ -136,6 +137,34 @@ def UpdateCaiPiaoData(strDataFileName):
     return STR_SUCESS, STR_OK
 
 
+
+def GetNoRate(strPosition, strNoSet): 
+    listRate = []
+    strSql = 'select * from shishicai order by no desc;'
+    g_logger.info("sql: " + strSql)
+    listRes = sqlAdp.ExecuSearch(strSql)
+    if len(listRes) == 0:
+        return STR_SUCESS, STR_DATA_ERR, listRate
+    iLastNo = listRes[0][0]
+
+    strSql = 'select * from shishicai where %s in %s order by dateno desc;' %(strPosition, strNoSet)
+    g_logger.info("sql: " + strSql)
+    listRes = sqlAdp.ExecuSearch(strSql)
+
+    
+    
+    for info in listRes:
+        dictRateInfo = {}
+        dictRateInfo["span"] = iLastNo - info[0]
+        iLastNo = info[0]
+        dictRateInfo["phase"] = info[1]
+        dictRateInfo["code"] = str(info[2]) + str(info[3]) + str(info[4]) + str(info[5]) + str(info[6])
+        listRate.append(dictRateInfo)
+
+    return STR_SUCESS, STR_OK, listRate
+
+
+
 def ParserCaiPiaoCmd(strCmdJson):
     g_logger.info("cmd json:" + strCmdJson)
     dictRes = {}
@@ -148,6 +177,8 @@ def ParserCaiPiaoCmd(strCmdJson):
             SetCook(inputDict['Cookie'])
         if 'UpdateCaiPiaoData' == inputDict['Cmd']:
             strRes, strResCode = UpdateCaiPiaoData(inputDict['datafilepath'])
+        if 'NoRateAnalyse' == inputDict['Cmd']:
+            strRes, strResCode, listResInfo = GetNoRate(inputDict["Position"], inputDict['NoSet'])            
         else:
             strRes = STR_FAIL
             strResCode = STR_UNKNOW_CMD
@@ -190,9 +221,9 @@ if __name__ == "__main__":
     #sqlAdp.ExecuSearch(strSql)
     dictCmd = {}
     dictCmd["Cmd"] = "UpdateCaiPiaoData"
-    BIN_DIR = os.path.dirname(__file__)
-    strDataPath = os.path.join(BIN_DIR, 'caipiao.data')
-    dictCmd['datafilepath'] = strDataPath
+    dictCmd["Cmd"] = "NoRateAnalyse"
+    dictCmd["NoSet"] = "(0,3,6,9)"
+    dictCmd["Position"] = "qian"
     strCmdJson = json.dumps(dictCmd, ensure_ascii = False)
     print ParserCaiPiaoCmd(strCmdJson)
     

@@ -3,7 +3,7 @@ from binascii import b2a_base64
 import json
 import re
 import urllib
-import urllib2
+#import urllib2
 import cookielib
 import socket
 import time
